@@ -1,0 +1,11 @@
+backend/target/
+backend/.idea/
+backend/*.iml
+backend/src/main/resources/application*.yml
+backend/src/main/resources/application*.properties
+backend/src/main/resources/static/
+backend/uploads/
+.env
+.env.*
+*.log
+.DS_Store
