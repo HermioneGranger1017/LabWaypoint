@@ -1,42 +1,49 @@
 # LabWaypoint
 
-A platform for lab equipment, competition discovery, and project readiness.
+LabWaypoint 是面向实验室的工作平台，目前提供设备档案、借还协作和使用教程。比赛发现与装备推荐是后续规划的功能。
 
-## Current status
+## 项目现状
 
-The `backend/` directory contains the Spring Boot API for lab equipment, users,
-registration review, instructions, edit approvals, borrowing, and image uploads.
-The `frontend/` directory contains the Vue 3 reconstruction of the lab workspace.
-Competition discovery and recommendations are planned; they have no backend API yet.
+- `backend/`：Spring Boot 后端，提供用户、注册审核、设备、借还、教程、编辑授权和图片上传接口。
+- `frontend/`：使用 Vue 3 和 Vite 重写的前端，视觉风格参考苏联构成主义海报。
+- 比赛发现与推荐尚无后端接口，前端也没有填充虚构数据。
 
-## Backend setup
+## 启动后端
 
-- Java 17, Maven, and MySQL are required.
-- Copy `backend/src/main/resources/application.yml.example` to
-  `backend/src/main/resources/application.yml`.
-- Set `DB_PASSWORD` to your local database password and `JWT_SECRET` to a private,
-  randomly generated value of at least 32 characters. Keep both values outside Git.
-- Set `UPLOAD_PATH` if you want files stored outside `./uploads/`.
-- Use an existing `lab_equipment` database. `backend/sql/` contains two migrations
-  for the borrowing and registration review features; a complete fresh database
-  schema is not yet included.
+需要 Java 17、Maven 和 MySQL。将 `backend/src/main/resources/application.yml.example` 复制为同目录下的 `application.yml`，并通过环境变量配置：
 
-From `backend/`, run `mvn spring-boot:run` after configuring the database.
+- `DB_PASSWORD`：本机数据库密码。
+- `JWT_SECRET`：至少 32 个字符的随机私钥。
+- `UPLOAD_PATH`：可选；不设置时文件写入 `./uploads/`。
 
-## Frontend development
+请勿把实际密码或私钥提交到 Git。后端目前使用已有的 `lab_equipment` 数据库；`backend/sql/` 提供借还和注册审核的迁移脚本，尚未提供从空库创建完整数据库的脚本。
 
-From `frontend/`, run `npm ci` and `npm run dev`. Vite serves the app on port
-5173 and proxies `/api` and `/uploads` to the Spring Boot server on port 8080.
-The frontend uses hash routes, so its home URL is `http://localhost:5173/#/home`.
-Run `npm run build` to create `frontend/dist/`; this command does not copy files
-into the backend's static directory.
+配置完成后，在 `backend/` 目录运行：
 
-## Repository layout
+```sh
+mvn spring-boot:run
+```
 
-- `backend/src/main/java/`: Spring Boot API and business logic
-- `backend/src/main/resources/application.yml.example`: safe configuration template
-- `backend/sql/`: existing database migration scripts
-- `frontend/src/`: Vue 3 pages, API client, authentication state, and poster-style UI
+Windows 环境下，后端会使用 Tomcat NIO2 连接器，以避开本机 Java NIO 回环连接启动失败的问题。
 
-Local credentials, uploaded files, build output, and the previous frontend bundle
-are excluded from this repository.
+## 启动前端
+
+先启动后端，再在 `frontend/` 目录运行：
+
+```sh
+npm ci
+npm run dev
+```
+
+开发服务器默认使用 5173 端口，并将 `/api` 和 `/uploads` 代理到 8080 端口的后端。前端使用哈希路由，首页地址为 `http://127.0.0.1:5173/#/home`。
+
+运行 `npm run build` 会生成 `frontend/dist/`；构建结果不会自动复制到后端的 `static/` 目录。前端的更多配置见 [前端说明](frontend/README.md)。
+
+## 目录说明
+
+- `backend/src/main/java/`：后端接口与业务逻辑。
+- `backend/src/main/resources/application.yml.example`：不含实际密钥的配置模板。
+- `backend/sql/`：现有数据库迁移脚本。
+- `frontend/src/`：Vue 页面、接口客户端、登录状态与样式。
+
+本地凭据、数据库备份、上传文件、构建产物和旧版前端打包文件均不纳入 Git。
